@@ -1,5 +1,6 @@
 const hre = require("hardhat");
 const config = require("../config/config.json");
+const fs = require("fs");
 
 async function main() {
   await hre.run('compile');
@@ -16,6 +17,8 @@ async function main() {
   await snowdogSeller.deployed();
 
   console.log("SnowdogSeller deployed to:", snowdogSeller.address);
+  config.snowdogSeller = snowdogSeller.address;
+  fs.writeFileSync("./config/config.json", JSON.stringify(config, null, 4), "utf-8");
 }
 
 // We recommend this pattern to be able to use async/await everywhere

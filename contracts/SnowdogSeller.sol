@@ -14,7 +14,7 @@ contract SnowdogSeller is Ownable {
     address private joeRouter;
 
     // min $30m LP balance to sell
-    uint private constant MIN_MIM_LP_AMOUNT = 30000000 * 1e18; 
+    uint private constant MIN_MIM_LP_AMOUNT = 25000000 * 1e18; 
 
     constructor(
         address _snowdog,
