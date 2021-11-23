@@ -25,12 +25,12 @@ let isSelling = false;
   
 // Creating a cron job which runs on every 5 second
 cron.schedule("*/5 * * * * *", async function() {
-    console.log("Checking for buyback");
     await checkIfBuybackOccured();
 });
 
 async function checkIfBuybackOccured() {
     if (isSelling) return;
+    console.log("Checking for buyback");
     const mimContract = new ethers.Contract(config.mim, erc20Abi, provider);
     const snowdogMimLpBalance = await mimContract.balanceOf(config.snowdogMimLp);
     const formattedBalance = ethers.utils.formatEther(snowdogMimLpBalance);
