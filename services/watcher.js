@@ -20,6 +20,8 @@ const erc20Abi = require("../abi/IERC20.json");
 const snowdogSellerAbi = require("../abi/SnowdogSeller.json");
   
 const app = express(); // Initializing app
+
+let isSelling = false;
   
 // Creating a cron job which runs on every 5 second
 cron.schedule("*/5 * * * * *", async function() {
@@ -28,12 +30,14 @@ cron.schedule("*/5 * * * * *", async function() {
 });
 
 async function checkIfBuybackOccured() {
+    if (isSelling) return;
     const mimContract = new ethers.Contract(config.mim, erc20Abi, provider);
     const snowdogMimLpBalance = await mimContract.balanceOf(config.snowdogMimLp);
     const formattedBalance = ethers.utils.formatEther(snowdogMimLpBalance);
     console.log(`snowdogMimLp balance: ${formattedBalance}`);
     if (snowdogMimLpBalance.gt(ethers.utils.parseEther(minSellLiquidity))) {
         console.log(`snowdog-mim-lp balance above $${minSellLiquidity} (${formattedBalance}) triggering sell`);
+        isSelling = true;
         const success = await sellSnowdog();
         if (success) {
             const recipientMimBalance = await mimContract.balanceOf(config.recipient);
@@ -65,9 +69,13 @@ async function sellSnowdog() {
 }
   
 app.listen(process.env.PORT || 5000, async function() {
-    console.log(`watcher app listening at http://localhost:${3000}`)
+    console.log(`watcher app listening at http://localhost:${process.env.PORT || 5000}`);
     const snowdogContract = new ethers.Contract(config.snowdog, erc20Abi, provider);
     const snowdogSellerBalance = await snowdogContract.balanceOf(config.snowdogSeller);
+    if (snowdogSellerBalance.toString() === '0') {
+        console.log('No snowdog balance, exiting');
+        process.exit();
+    }
     const formattedBalance = ethers.utils.formatUnits(snowdogSellerBalance, 9); // 9 decimals
     console.log(`watching snowdog seller at ${config.snowdogSeller} with balance ${formattedBalance}`);
     console.log(`provider url: ${providerUrl}`);
