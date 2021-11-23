@@ -6,6 +6,10 @@ async function main() {
   await hre.run('compile');
   const [ deployer ] = await hre.ethers.getSigners();
 
+  if (config.recipient === "") {
+    throw new Error("Must define recipient in config.json");
+  }
+
   // We get the contract to deploy
   const SnowdogSeller = await hre.ethers.getContractFactory("SnowdogSeller", deployer);
   const snowdogSeller = await SnowdogSeller.deploy(

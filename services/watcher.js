@@ -8,10 +8,14 @@ const providerUrl = process.env.PROVIDER_URL;
 const privateKey = process.env.PRIVATE_KEY;
 const minSellLiquidity = process.env.MIN_SELL_LIQUIDITY;
 const gasPrice = process.env.GAS_PRICE;
+const snowdogSeller = process.env.SNOWDOG_SELLER;
+const recipient = process.env.RECIPIENT;
 if (!providerUrl) throw new Error("Missing env var PROVIDER_URL");
 if (!privateKey) throw new Error("Missing env var PRIVATE_KEY");
 if (!minSellLiquidity) throw new Error("Missing env var MIN_SELL_LIQUIDITY");
 if (!gasPrice) throw new Error("Missing env var GAS_PRICE");
+if (!snowdogSeller) throw new Error("Missing env var SNOWDOG_SELLER");
+if (!recipient) throw new Error("Missing env var RECIPIENT");
 
 const provider = new ethers.providers.JsonRpcProvider(providerUrl);
 const wallet = new ethers.Wallet(privateKey, provider);
@@ -40,7 +44,7 @@ async function checkIfBuybackOccured() {
         isSelling = true;
         const success = await sellSnowdog();
         if (success) {
-            const recipientMimBalance = await mimContract.balanceOf(config.recipient);
+            const recipientMimBalance = await mimContract.balanceOf(recipient);
             console.log(`Snowbank sold for ${ethers.utils.formatEther(recipientMimBalance)} MIM`);
             process.exit(); 
         } else {
@@ -51,7 +55,7 @@ async function checkIfBuybackOccured() {
 }
 
 async function sellSnowdog() {
-    const snowdogSeller = new ethers.Contract(config.snowdogSeller, snowdogSellerAbi, wallet);
+    const snowdogSeller = new ethers.Contract(snowdogSeller, snowdogSellerAbi, wallet);
     try {
         const tx = await snowdogSeller.sellSnowdog(
             ethers.utils.parseEther(minSellLiquidity),
@@ -71,14 +75,18 @@ async function sellSnowdog() {
 app.listen(process.env.PORT || 5000, async function() {
     console.log(`watcher app listening at http://localhost:${process.env.PORT || 5000}`);
     const snowdogContract = new ethers.Contract(config.snowdog, erc20Abi, provider);
-    const snowdogSellerBalance = await snowdogContract.balanceOf(config.snowdogSeller);
+    const snowdogSellerBalance = await snowdogContract.balanceOf(snowdogSeller);
+    const formattedBalance = ethers.utils.formatUnits(snowdogSellerBalance, 9); // 9 decimals
+
+    console.log(`watching snowdog seller at ${snowdogSeller} with balance ${formattedBalance}`);
+    console.log(`provider url: ${providerUrl}`);
+    console.log(`min sell liquidity: ${minSellLiquidity}`);
+    console.log(`gas price: ${gasPrice}`);
+    console.log(`snowdog seller: ${snowdogSeller}`);
+    console.log(`recipient: ${recipient}`);
+
     if (snowdogSellerBalance.toString() === '0') {
         console.log('No snowdog balance, exiting');
         process.exit();
     }
-    const formattedBalance = ethers.utils.formatUnits(snowdogSellerBalance, 9); // 9 decimals
-    console.log(`watching snowdog seller at ${config.snowdogSeller} with balance ${formattedBalance}`);
-    console.log(`provider url: ${providerUrl}`);
-    console.log(`min sell liquidity: ${minSellLiquidity}`);
-    console.log(`gas price: ${gasPrice}`);
 });
