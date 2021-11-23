@@ -4,9 +4,10 @@ const fs = require("fs");
 
 async function main() {
   await hre.run('compile');
+  const [ deployer ] = await hre.ethers.getSigners();
 
   // We get the contract to deploy
-  const SnowdogSeller = await hre.ethers.getContractFactory("SnowdogSeller");
+  const SnowdogSeller = await hre.ethers.getContractFactory("SnowdogSeller", deployer);
   const snowdogSeller = await SnowdogSeller.deploy(
     config.snowdog,
     config.mim,

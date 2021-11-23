@@ -1,3 +1,4 @@
+require("dotenv").config();
 require("@nomiclabs/hardhat-waffle");
 require("hardhat-abi-exporter");
 
@@ -28,7 +29,6 @@ module.exports = {
     hardhat: {
       forking: {
         url: "https://speedy-nodes-nyc.moralis.io/895bce540638a254f80d534d/avalanche/mainnet",
-        //blockNumber: 12334447
       },
       chainId: 1337,
       accounts: {
@@ -42,7 +42,6 @@ module.exports = {
     mainnet: {
       url: "https://speedy-nodes-nyc.moralis.io/895bce540638a254f80d534d/avalanche/mainnet",
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
-      gasPrice: 6000000000,
       timeout: 100000
     }
   },
