@@ -3,15 +3,13 @@
   "scripts": {
     "start": "node services/watcher.js"
   },
-  "devDependencies": {
+  "dependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-waffle": "^2.0.1",
     "chai": "^4.3.4",
     "ethereum-waffle": "^3.4.0",
     "ethers": "^5.5.1",
-    "hardhat": "^2.6.8"
-  },
-  "dependencies": {
+    "hardhat": "^2.6.8",
     "@openzeppelin/contracts": "^4.3.3",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
