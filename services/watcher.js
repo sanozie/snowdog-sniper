@@ -64,7 +64,7 @@ async function sellSnowdog() {
     }
 }
   
-app.listen(3000, async function() {
+app.listen(process.env.PORT || 5000, async function() {
     console.log(`watcher app listening at http://localhost:${3000}`)
     const snowdogContract = new ethers.Contract(config.snowdog, erc20Abi, provider);
     const snowdogSellerBalance = await snowdogContract.balanceOf(config.snowdogSeller);
