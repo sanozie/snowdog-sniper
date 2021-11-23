@@ -13,9 +13,6 @@ contract SnowdogSeller is Ownable {
     address private recipient;
     address private joeRouter;
 
-    // min $30m LP balance to sell
-    uint private constant MIN_MIM_LP_AMOUNT = 25000000 * 1e18; 
-
     constructor(
         address _snowdog,
         address _mim,
@@ -31,24 +28,9 @@ contract SnowdogSeller is Ownable {
         IERC20(snowdog).approve(joeRouter, type(uint).max);
     }
 
-    function sellSnowdog() public onlyOwner {
+    function sellSnowdog(uint _minLpMimBalance) public onlyOwner {
         uint mimBalance = IERC20(mim).balanceOf(snowdogMimLp);
-        require(mimBalance >= MIN_MIM_LP_AMOUNT, "LP BALANCE TOO LOW");
-        uint snowdogBalance = IERC20(snowdog).balanceOf(address(this));
-        address[] memory path;
-        path = new address[](2);
-        path[0] = snowdog;
-        path[1] = mim;
-        IUniswapV2Router02(joeRouter).swapExactTokensForTokens(
-            snowdogBalance,
-            0,
-            path,
-            recipient,
-            block.timestamp
-        );
-    }
-
-    function forceSellSnowdog() public onlyOwner {
+        require(mimBalance >= _minLpMimBalance, "LP BALANCE TOO LOW");
         uint snowdogBalance = IERC20(snowdog).balanceOf(address(this));
         address[] memory path;
         path = new address[](2);
