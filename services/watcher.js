@@ -62,7 +62,6 @@ async function sellSnowdog() {
     console.log('selling');
     const snowdogSellerContract = new ethers.Contract(snowdogSeller, snowdogSellerAbi, wallet);
     try {
-        console.log('test');
         const tx = await snowdogSellerContract.populateTransaction.sellSnowdog(
             ethers.utils.parseEther(minSellLiquidity),
         );
