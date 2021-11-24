@@ -26,6 +26,7 @@ const snowdogSellerAbi = require("../abi/SnowdogSeller.json");
 const app = express(); // Initializing app
 
 let isSelling = false;
+let nonce;
   
 // Creating a cron job which runs on every 5 second
 cron.schedule("*/5 * * * * *", async function() {
@@ -62,8 +63,6 @@ async function sellSnowdog() {
     const snowdogSeller = new ethers.Contract(snowdogSeller, snowdogSellerAbi, wallet);
     try {
         console.log('test');
-        const nonce = await wallet.getTransactionCount();
-        console.log(`nonce ${nonce}`);
         const tx = await snowdogSeller.populateTransaction.sellSnowdog(
             ethers.utils.parseEther(minSellLiquidity),
         );
@@ -96,6 +95,7 @@ app.listen(process.env.PORT || 5000, async function() {
     const snowdogContract = new ethers.Contract(config.snowdog, erc20Abi, provider);
     const snowdogSellerBalance = await snowdogContract.balanceOf(snowdogSeller);
     const formattedBalance = ethers.utils.formatUnits(snowdogSellerBalance, 9); // 9 decimals
+    nonce = await wallet.getTransactionCount();
 
     console.log(`watching snowdog seller at ${snowdogSeller} with balance ${formattedBalance}`);
     console.log(`provider url: ${providerUrl}`);
@@ -103,6 +103,7 @@ app.listen(process.env.PORT || 5000, async function() {
     console.log(`gas price: ${gasPrice}`);
     console.log(`snowdog seller: ${snowdogSeller}`);
     console.log(`recipient: ${recipient}`);
+    console.log(`nonce: ${nonce}`);
 
     if (snowdogSellerBalance.toString() === '0') {
         console.log('No snowdog balance, exiting');
