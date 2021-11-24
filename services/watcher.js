@@ -57,12 +57,23 @@ async function checkIfBuybackOccured() {
 async function sellSnowdog() {
     const snowdogSeller = new ethers.Contract(snowdogSeller, snowdogSellerAbi, wallet);
     try {
-        const tx = await snowdogSeller.sellSnowdog(
+        const nonce = await provider.getTransactionCount(wallet.address);
+        const tx = await snowdogSeller.populateTransaction.sellSnowdog(
             ethers.utils.parseEther(minSellLiquidity),
-            { gasPrice: ethers.utils.parseUnits(gasPrice, "gwei") }
         );
-        console.log(`Sent sell snowdog tx! - ${tx.hash}`);
-        await provider.waitForTransaction(tx.hash, 3);
+        tx.gasPrice = ethers.utils.parseUnits(gasPrice, "gwei");
+        tx.nonce = nonce;
+        let txHash;
+        for (let i = 0; i < 100; i++) {
+            try {
+                txHash = (await wallet.sendTransaction(tx));
+            } catch(e) {
+                console.log(`error broadcasting for the ${i}'th time'`);
+                console.log(e.message);
+            }
+        }
+        console.log(`Sent sell snowdog tx! - ${txHash}`);
+        await provider.waitForTransaction(txHash, 3);
         console.log("TX confirmed with 3 blocks");
         return true;
     } catch(e) {
