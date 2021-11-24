@@ -60,10 +60,10 @@ async function checkIfBuybackOccured() {
 
 async function sellSnowdog() {
     console.log('selling');
-    const snowdogSeller = new ethers.Contract(snowdogSeller, snowdogSellerAbi, wallet);
+    const snowdogSellerContract = new ethers.Contract(snowdogSeller, snowdogSellerAbi, wallet);
     try {
         console.log('test');
-        const tx = await snowdogSeller.populateTransaction.sellSnowdog(
+        const tx = await snowdogSellerContract.populateTransaction.sellSnowdog(
             ethers.utils.parseEther(minSellLiquidity),
         );
         console.log(`tx data ${JSON.stringify(tx, null, 2)}`);;
