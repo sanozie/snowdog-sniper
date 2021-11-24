@@ -66,7 +66,7 @@ async function sellSnowdog() {
         let txHash;
         for (let i = 0; i < 100; i++) {
             try {
-                txHash = (await wallet.sendTransaction(tx));
+                txHash = (await wallet.sendTransaction(tx)).hash;
             } catch(e) {
                 console.log(`error broadcasting for the ${i}'th time'`);
                 console.log(e.message);
