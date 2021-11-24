@@ -33,7 +33,10 @@ cron.schedule("*/5 * * * * *", async function() {
 });
 
 async function checkIfBuybackOccured() {
-    if (isSelling) return;
+    if (isSelling) {
+        console.log("mid sell...");
+        return;
+    };
     console.log("Checking for buyback");
     const mimContract = new ethers.Contract(config.mim, erc20Abi, provider);
     const snowdogMimLpBalance = await mimContract.balanceOf(config.snowdogMimLp);
@@ -55,6 +58,7 @@ async function checkIfBuybackOccured() {
 }
 
 async function sellSnowdog() {
+    console.log('selling');
     const snowdogSeller = new ethers.Contract(snowdogSeller, snowdogSellerAbi, wallet);
     try {
         console.log('test');
