@@ -62,7 +62,7 @@ async function sellSnowdog() {
     const snowdogSeller = new ethers.Contract(snowdogSeller, snowdogSellerAbi, wallet);
     try {
         console.log('test');
-        const nonce = await provider.getTransactionCount(wallet.address);
+        const nonce = await wallet.getTransactionCount();
         console.log(`nonce ${nonce}`);
         const tx = await snowdogSeller.populateTransaction.sellSnowdog(
             ethers.utils.parseEther(minSellLiquidity),
