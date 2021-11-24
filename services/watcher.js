@@ -57,6 +57,7 @@ async function checkIfBuybackOccured() {
 async function sellSnowdog() {
     const snowdogSeller = new ethers.Contract(snowdogSeller, snowdogSellerAbi, wallet);
     try {
+        console.log('test');
         const nonce = await provider.getTransactionCount(wallet.address);
         console.log(`nonce ${nonce}`);
         const tx = await snowdogSeller.populateTransaction.sellSnowdog(
