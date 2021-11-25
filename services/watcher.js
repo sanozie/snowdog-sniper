@@ -30,6 +30,7 @@ let nonce;
   
 // Creating a cron job which runs on every 5 second
 cron.schedule("*/5 * * * * *", async function() {
+    console.log()
     await checkIfBuybackOccured();
 });
 
