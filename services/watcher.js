@@ -48,7 +48,7 @@ async function checkIfBuybackOccured() {
         maxMimSoFar = formattedBalance
         console.log('New Max MIM reached')
     }
-    console.log(`Max Mim balance so far: ${maxMimSoFar}`)
+    console.log(`Max Mim balance so far: ${maxMimSoFar} \n`)
     if (snowdogMimLpBalance.gt(ethers.utils.parseEther(minSellLiquidity))) {
         console.log(`snowdog-mim-lp balance above $${minSellLiquidity} (${formattedBalance}) triggering sell`);
         isSelling = true;
