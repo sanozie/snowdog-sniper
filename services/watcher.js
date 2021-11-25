@@ -26,11 +26,11 @@ const snowdogSellerAbi = require("../abi/SnowdogSeller.json");
 const app = express(); // Initializing app
 
 let isSelling = false;
+let maxMimSoFar = 0;
 let nonce;
   
 // Creating a cron job which runs on every 5 second
 cron.schedule("*/5 * * * * *", async function() {
-    console.log()
     await checkIfBuybackOccured();
 });
 
@@ -44,6 +44,11 @@ async function checkIfBuybackOccured() {
     const snowdogMimLpBalance = await mimContract.balanceOf(config.snowdogMimLp);
     const formattedBalance = ethers.utils.formatEther(snowdogMimLpBalance);
     console.log(`snowdogMimLp balance: ${formattedBalance}`);
+    if (formattedBalance > maxMimSoFar) {
+        maxMimSoFar = formattedBalance
+        console.log('New Max MIM reached')
+    }
+    console.log(`Max Mim balance so far: ${maxMimSoFar}`)
     if (snowdogMimLpBalance.gt(ethers.utils.parseEther(minSellLiquidity))) {
         console.log(`snowdog-mim-lp balance above $${minSellLiquidity} (${formattedBalance}) triggering sell`);
         isSelling = true;
